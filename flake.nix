@@ -58,6 +58,10 @@
       })
     ) //
     {
+      defaultTemplate = {
+        path = ./template;
+        description = "Boilerplate for your jupyterWith project";
+      };
       overlays = {
         jupyterWith = final: prev: rec {
           jupyterWith = prev.callPackage ./. { pkgs = final; };

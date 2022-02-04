@@ -1,4 +1,9 @@
-.ipynb_checkpoints/
+/.ipynb_checkpoints/
 
 # generated folder of jupyter distribution
-jupyterlab/
+/jupyterlab/
+
+/template/flake.lock
+template/flake.lock
+/template/result
+/result
