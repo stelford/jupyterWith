@@ -12,38 +12,29 @@
     , nixpkgs
     , flake-utils
     , jupyterWith
-    }:
-    flake-utils.lib.eachSystem [ "x86_64-linux" ] (system:
-    let
-      pkgs = import nixpkgs {
-        inherit system;
-        overlays = builtins.attrValues jupyterWith.overlays;
-      };
+  }:
+  flake-utils.lib.eachSystem [ "x86_64-linux" ] (system:
+  let
+    pkgs = import nixpkgs {
+      inherit system;
+      overlays = builtins.attrValues jupyterWith.overlays;
+    };
 
-      iPython = pkgs.jupyterWith.kernels.iPythonWith {
-        name = "Python-data-env";
-        ignoreCollisions = true;
-        packages = p: [
-          p.numpy
-        ];
-      };
+    kernels = let
+      inherit (builtins) map readDir attrNames;
+      inherit (pkgs.lib.attrsets) filterAttrs;
+      inherit (pkgs.lib.strings) hasPrefix hasSuffix;
+    in
+    map (name: import ./kernels/${name} { inherit pkgs; })
+    (attrNames
+    (filterAttrs
+    (n: v: v == "regular" && hasSuffix ".nix" n && !hasPrefix "_" n)
+    (readDir ./kernels)));
 
-      iHaskell = pkgs.jupyterWith.kernels.iHaskellWith {
-        name = "ihaskell-flake";
-        packages = p: with p; [ vector aeson ];
-        extraIHaskellFlags = "--codemirror Haskell"; # for jupyterlab syntax highlighting
-        haskellPackages = pkgs.haskellPackages;
-      };
-
-      jupyterEnvironment =
-        pkgs.jupyterWith.jupyterlabWith {
-          kernels = [
-            iPython
-            iHaskell
-          ];
-        };
-    in rec {
-      defaultPackage = packages.jupyterEnvironment;
-      packages = { inherit jupyterEnvironment; };
-    });
+    jupyterEnvironment =
+      pkgs.jupyterWith.jupyterlabWith { inherit kernels; };
+  in rec {
+    defaultPackage = packages.jupyterEnvironment;
+    packages = { inherit jupyterEnvironment; };
+  });
 }
