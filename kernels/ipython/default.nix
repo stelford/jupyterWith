@@ -10,6 +10,7 @@ let
   kernelEnv = (python3.withPackages (p:
     packages p ++ (with p; [
       ipykernel
+      simplegeneric # todo: fix ipykernel propagatedbuildinputs
     ])
   )).override (args: { inherit ignoreCollisions; });
 
@@ -18,6 +19,7 @@ let
     language = "python";
     argv = [
       "${kernelEnv.interpreter}"
+      "-E" # ignore host PYTHONPATH
       "-m"
       "ipykernel_launcher"
       "-f"
@@ -27,7 +29,7 @@ let
   };
 
   pythonBin = writeScriptBin "python-${name}" ''
-    ${kernelEnv.interpreter} "$@"
+    PYTHONPATH= ${kernelEnv.interpreter} "$@"
   '';
 
   ipythonKernel = stdenv.mkDerivation {
