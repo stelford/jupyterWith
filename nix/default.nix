@@ -7,4 +7,4 @@ let
   ];
   overlaysAll = defaultOverlays ++ overlays;
 in
-import ./nixpkgs.nix { config = { allowUnsupportedSystem = true; }; overlays = overlaysAll; }
+import <nixpkgs> { config = { allowUnsupportedSystem = true; }; overlays = overlaysAll; }
