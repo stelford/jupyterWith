@@ -7,7 +7,7 @@
       url = "github:/teto/flake-compat/support-packages";
       flake = false;
     };
-    nixpkgs.url = "github:nixos/nixpkgs/release-21.11";
+    nixpkgs.url = "github:nixos/nixpkgs/release-22.05";
     ihaskell.url = "github:gibiansky/IHaskell";
   };
 
